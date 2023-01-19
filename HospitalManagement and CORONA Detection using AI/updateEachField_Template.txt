@@ -1,0 +1,27 @@
+def updatePatients():
+    print("Update Patients")
+    "need to update each value"
+    i = True
+    while i:
+        print("\n1. Update Patients ID.\t2. Update Patients Name\t3. Update Patients Address\t4. Update Patients Email\n5. Update Patient zip-code.\t6. Update Patient telNo.\tUpdate Patient Insurance ID\t8. EXIT\n")
+        try: 
+            ch = int(input("Enter Your choice:  "))
+            if(ch == 1):
+                print("Update Patient ID:")
+            elif(ch == 2):
+                print("Update Patient Name:")
+            elif(ch == 3):
+                print("Update Patient Address:")
+            elif(ch == 4):
+                print("Update Patient email:")
+            elif(ch == 5):
+                print("Update Patient zip:")
+            elif(ch == 6):
+                print("Update Patient tel:")
+            elif(ch == 7):
+                print("Update Patient Insurance ID:")
+            elif(ch == 8):
+                i = False
+                print("Exiting")
+        except Exception as e:
+            print("ERROR: ",e)

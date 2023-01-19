@@ -1,0 +1,498 @@
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+SELECT pt.PatientName, pd.DiseaseId FROM
+PatientDisease pd INNER JOIN PatientDetails pt ON
+pd.PatientId = pt.PatientId WHERE
+pd.DiseaseId IN ( SELECT PatientDisease.DiseaseId FROM PatientDisease GROUP BY PatientDisease.DiseaseId HAVING COUNT(PatientDisease.DiseaseId) > 1)
+ORDER BY 2;
+
+
+
++-------------+-----------+
+| PatientName | DiseaseId |
++-------------+-----------+
+| Jessica     |        92 |
+| Michael     |        92 |
+| Elizabeth   |        94 |
+| Mary        |        94 |
+| Sarah       |        94 |
+| Daniel      |        94 |
+| Barbara     |        94 |
+| William     |        96 |
+| Jennifer    |        96 |
+| Thomas      |        99 |
+| Karen       |        99 |
+| Richard     |        99 |
+| James       |       100 |
+| Joseph      |       100 |
+| Michael     |       106 |
+| Linda       |       106 |
+| Christopher |       106 |
+| Susan       |       107 |
+| Patricia    |       107 |
++-------------+-----------+
+19 rows in set (0.00 sec)
+
+mysql> 
+
+
+        SELECT DISTINCT ( dd.doctname ), pd.patientname, cc.diseasedescription, cc.chronic FROM
+        Doctor dd 
+        INNER JOIN NursePatientDoct npd ON dd.doctid = npd.doctid 
+        INNER JOIN PatientDetails pd ON pd.patientid = npd.patientid, Disease cc 
+        INNER JOIN PatientDisease ps ON cc.diseaseid = ps.diseaseid
+        limit 50;
++--------------+-------------+--------------------+---------+
+| doctname     | patientname | diseasedescription | chronic |
++--------------+-------------+--------------------+---------+
+| Dr.Edward    | James       | Obesity            | Y       |
+| Dr.Timothy   | Robert      | Obesity            | Y       |
+| Dr.Cynthia   | John        | Obesity            | Y       |
+| Dr.Deborah   | Patricia    | Obesity            | Y       |
+| Dr.Deborah   | Susan       | Obesity            | Y       |
+| Dr.Stephanie | Jessica     | Obesity            | Y       |
+| Dr.Kathleen  | Michael     | Obesity            | Y       |
+| Dr.Melissa   | Thomas      | Obesity            | Y       |
+| Dr.Jonathan  | Christopher | Obesity            | Y       |
+| Dr.George    | Mary        | Obesity            | Y       |
+| Dr.Eric      | David       | Obesity            | Y       |
+| Dr.George    | Sarah       | Obesity            | Y       |
+| Dr.Kathleen  | William     | Obesity            | Y       |
+| Dr.Melissa   | Karen       | Obesity            | Y       |
+| Dr.Cynthia   | Lisa        | Obesity            | Y       |
+| Dr.Timothy   | Daniel      | Obesity            | Y       |
+| Dr.Gary      | Jennifer    | Obesity            | Y       |
+| Dr.Jason     | James       | Obesity            | Y       |
+| Dr.George    | Barbara     | Obesity            | Y       |
+| Dr.Melissa   | Richard     | Obesity            | Y       |
+| Dr.Jason     | Joseph      | Obesity            | Y       |
+| Dr.Jonathan  | Linda       | Obesity            | Y       |
+| Dr.Gary      | William     | Obesity            | Y       |
+| Dr.Ryan      | Elizabeth   | Obesity            | Y       |
+| Dr.Jonathan  | Michael     | Obesity            | Y       |
+| Dr.Edward    | James       | Asthma             | Y       |
+| Dr.Timothy   | Robert      | Asthma             | Y       |
+| Dr.Cynthia   | John        | Asthma             | Y       |
+| Dr.Deborah   | Patricia    | Asthma             | Y       |
+| Dr.Deborah   | Susan       | Asthma             | Y       |
+| Dr.Stephanie | Jessica     | Asthma             | Y       |
+| Dr.Kathleen  | Michael     | Asthma             | Y       |
+| Dr.Melissa   | Thomas      | Asthma             | Y       |
+| Dr.Jonathan  | Christopher | Asthma             | Y       |
+| Dr.George    | Mary        | Asthma             | Y       |
+| Dr.Eric      | David       | Asthma             | Y       |
+| Dr.George    | Sarah       | Asthma             | Y       |
+| Dr.Kathleen  | William     | Asthma             | Y       |
+| Dr.Melissa   | Karen       | Asthma             | Y       |
+| Dr.Cynthia   | Lisa        | Asthma             | Y       |
+| Dr.Timothy   | Daniel      | Asthma             | Y       |
+| Dr.Gary      | Jennifer    | Asthma             | Y       |
+| Dr.Jason     | James       | Asthma             | Y       |
+| Dr.George    | Barbara     | Asthma             | Y       |
+| Dr.Melissa   | Richard     | Asthma             | Y       |
+| Dr.Jason     | Joseph      | Asthma             | Y       |
+| Dr.Jonathan  | Linda       | Asthma             | Y       |
+| Dr.Gary      | William     | Asthma             | Y       |
+| Dr.Ryan      | Elizabeth   | Asthma             | Y       |
+| Dr.Jonathan  | Michael     | Asthma             | Y       |
++--------------+-------------+--------------------+---------+
+50 rows in set (0.01 sec)
+
+mysql> SELECT
+    ->     patientpayments.paymentdate,
+    ->     patientpayments.patientid,
+    ->     SUM(patientpayments.paymentamount) totalamount
+    -> FROM
+    ->     patientpayments
+    -> GROUP BY
+    ->     patientpayments.paymentdate,
+    ->     patientpayments.patientid;
+ERROR 1146 (42S02): Table 'clusteruser9.patientpayments' doesn't exist
+mysql> SELECT     patientpayments.paymentdate,     patientpayments.patientid,     SUM(patientpayments.paymentamount) totalamount FROM     PatientPayments GROUP BY     patientpayments.paymentdate,     patientpayments.patientid;
+ERROR 1054 (42S22): Unknown column 'patientpayments.paymentdate' in 'field list'
+mysql> SELECT     patientpayments.paymentdate,     patientpayments.patientid,     SUM(patientpayments.paymentamount) totalamount FROM     PatientPayments GROUP BY     PatientPayments.paymentdate,     PatientPayments.patientid;
+ERROR 1054 (42S22): Unknown column 'patientpayments.paymentdate' in 'field list'
+mysql> select * from PatientPayments;+-----------+---------------+-------------+-----------+
+| PaymentId | PaymentAmount | PaymentDate | PatientId |
++-----------+---------------+-------------+-----------+
+|       801 |         10000 | 2016-01-10  |        35 |
+|       802 |         16000 | 2016-01-25  |        36 |
+|       803 |         98700 | 2016-02-20  |        37 |
+|       804 |         45600 | 2016-07-15  |        38 |
+|       805 |         32900 | 2016-10-25  |        39 |
+|       806 |         80700 | 2016-04-15  |        40 |
+|       807 |         54000 | 2016-11-18  |        41 |
+|       808 |         43790 | 2017-06-18  |        42 |
+|       809 |         76800 | 2017-11-11  |        43 |
+|       810 |         27900 | 2018-01-20  |        44 |
+|       811 |         67090 | 2017-02-01  |        45 |
+|       812 |         47800 | 2017-09-22  |        46 |
+|       813 |         39000 | 2017-10-12  |        47 |
+|       814 |         72980 | 2017-10-13  |        48 |
+|       815 |         58900 | 2016-08-25  |        49 |
+|       816 |         87600 | 2016-03-30  |        50 |
+|       817 |         23450 | 2016-04-20  |        51 |
+|       818 |         91000 | 2016-07-05  |        53 |
+|       819 |         32400 | 2016-12-21  |        54 |
+|       820 |         25700 | 2017-03-11  |        55 |
+|       821 |         19000 | 2017-03-30  |        56 |
+|       822 |         78000 | 2017-04-30  |        57 |
+|       823 |         43900 | 2018-01-20  |        38 |
+|       824 |         49200 | 2018-01-20  |        45 |
+|       825 |         49200 | 2017-07-25  |        35 |
++-----------+---------------+-------------+-----------+
+25 rows in set (0.01 sec)
+
+
+mysql> 
+
+        SELECT pp.patientid, pp.paymentdate, SUM(pp.paymentamount) totalamount FROM  PatientPayments pp 
+        GROUP BY pp.paymentdate, pp.patientid;
++-----------+-------------+-------------+
+| patientid | paymentdate | totalamount |
++-----------+-------------+-------------+
+|        35 | 2016-01-10  |       10000 |
+|        36 | 2016-01-25  |       16000 |
+|        37 | 2016-02-20  |       98700 |
+|        50 | 2016-03-30  |       87600 |
+|        40 | 2016-04-15  |       80700 |
+|        51 | 2016-04-20  |       23450 |
+|        53 | 2016-07-05  |       91000 |
+|        38 | 2016-07-15  |       45600 |
+|        49 | 2016-08-25  |       58900 |
+|        39 | 2016-10-25  |       32900 |
+|        41 | 2016-11-18  |       54000 |
+|        54 | 2016-12-21  |       32400 |
+|        45 | 2017-02-01  |       67090 |
+|        55 | 2017-03-11  |       25700 |
+|        56 | 2017-03-30  |       19000 |
+|        57 | 2017-04-30  |       78000 |
+|        42 | 2017-06-18  |       43790 |
+|        35 | 2017-07-25  |       49200 |
+|        46 | 2017-09-22  |       47800 |
+|        47 | 2017-10-12  |       39000 |
+|        48 | 2017-10-13  |       72980 |
+|        43 | 2017-11-11  |       76800 |
+|        38 | 2018-01-20  |       43900 |
+|        44 | 2018-01-20  |       27900 |
+|        45 | 2018-01-20  |       49200 |
++-----------+-------------+-------------+
+25 rows in set (0.01 sec)
+
+mysql> ^C
+        SELECT
+            pd.patientname,
+            ii.insuranceid,
+            ii.insuringcompany,
+            ii.startdate,
+            ii.enddates
+        FROM
+                PatientDetails pd
+            INNER JOIN InsuranceInfo ii ON pd.insuranceid = ii.insuranceid
+        GROUP BY
+            pd.patientname,
+            ii.insuranceid,
+            ii.insuringcompany,
+            ii.startdate,
+            ii.enddates;
++----------------------+-------------+---------------------------+------------+------------+
+| patientname          | insuranceid | insuringcompany           | startdate  | enddates   |
++----------------------+-------------+---------------------------+------------+------------+
+| Aditi Sanjeev Pandey |          60 | AARP                      | 2015-01-01 | 2020-06-01 |
+| Barbara              |          71 | Harvard                   | 2017-06-22 | 2022-06-22 |
+| Charles              |          77 | HealthMarkets             | 2018-04-08 | 2023-04-08 |
+| Christopher          |          78 | HealthPartners            | 2018-04-19 | 2023-04-19 |
+| Daniel               |          82 | Educators                 | 2018-10-15 | 2023-10-15 |
+| David                |          66 | Care Source               | 2015-05-07 | 2020-05-17 |
+| Elizabeth            |          69 | Golden Rule               | 2016-05-25 | 2021-05-25 |
+| James                |          60 | AARP                      | 2015-01-01 | 2020-06-01 |
+| Jennifer             |          67 | Group Health              | 2016-05-17 | 2021-05-17 |
+| Jessica              |          76 | Health Net                | 2018-03-11 | 2023-03-11 |
+| John                 |          62 | Blue Cross                | 2017-03-03 | 2022-03-03 |
+| Joseph               |          73 | Gelsinger                 | 2017-07-25 | 2022-07-22 |
+| Karen                |          80 | HighMark                  | 2018-08-29 | 2023-08-29 |
+| Linda                |          68 | American Family Insurance | 2016-05-22 | 2021-05-22 |
+| Lisa                 |          81 | Centene                   | 2018-09-30 | 2023-09-30 |
+| Mary                 |          64 | Fortis                    | 2015-04-10 | 2020-04-10 |
+| Matthew              |          84 | Cambia Health             | 2019-02-11 | 2024-02-14 |
+| Michael              |          63 | Delta                     | 2015-04-03 | 2020-04-03 |
+| Nancy                |          83 | Hurmana                   | 2019-01-15 | 2024-01-16 |
+| Patricia             |          65 | Emblem                    | 2015-04-12 | 2020-04-12 |
+| Richard              |          72 | Cigna                     | 2017-07-22 | 2022-07-22 |
+| Robert               |          61 | Aetna                     | 2017-02-02 | 2022-02-02 |
+| Sarah                |          79 | Anthem                    | 2018-06-19 | 2023-06-19 |
+| Susan                |          75 | Pilgrim                   | 2018-02-19 | 2023-02-19 |
+| Thomas               |          74 | Amerigroup                | 2018-01-29 | 2023-01-29 |
+| William              |          70 | Coventry                  | 2017-06-22 | 2022-06-22 |
++----------------------+-------------+---------------------------+------------+------------+
+26 rows in set (0.00 sec)
+
+mysql> SELECT
+    ->     pd.patientname,
+    ->     ff.feedbackon,
+    ->     ff.texts,
+    ->     ff.dates
+    -> FROM
+    ->          FeedBacks ff
+    ->     INNER JOIN PatientDetails pd ON ff.patientid = pd.patientid;
+ERROR 1146 (42S02): Table 'clusteruser9.FeedBacks' doesn't exist
+mysql> 
+
+        SELECT pd.patientname, ff.feedbackon, ff.texts, ff.dates FROM 
+        Feedbacks ff INNER JOIN PatientDetails pd ON ff.patientid = pd.patientid;
+
+
++-------------+---------------------+----------------------------------------+------------+
+| patientname | feedbackon          | texts                                  | dates      |
++-------------+---------------------+----------------------------------------+------------+
+| James       | Doctors             | Very Good                              | 2016-01-10 |
+| Robert      | Hospital Staff      | Friendly                               | 2016-01-25 |
+| John        | Hospital Facilities | Good Canteen Food                      | 2016-02-20 |
+| Michael     | Doctors             | Rsponsive                              | 2016-07-15 |
+| Mary        | Hospital Staff      | Helpful                                | 2016-10-25 |
+| Patricia    | Hospital Facilities | Clean and Tidy                         | 2016-04-15 |
+| David       | Doctors             | Puntual and Friendly                   | 2016-11-18 |
+| Jennifer    | Hospital Staff      | Often Not Available                    | 2017-06-18 |
+| Linda       | Hospital Facilities | Ambluance was not clean                | 2017-11-11 |
+| Elizabeth   | Doctors             |  Knowledgeable                         | 2018-01-20 |
+| William     | Hospital Staff      | Not Friendly                           | 2017-02-01 |
+| Barbara     | Hospital Facilities | Canteen Food is delicious              | 2017-09-22 |
+| Richard     | Doctors             | sensitive                              | 2017-10-22 |
+| Joseph      | Hospital Staff      | Not Available when needed              | 2017-10-13 |
+| Thomas      | Hospital Facilities | No Lifts For Patients                  | 2016-08-25 |
+| Susan       | Doctors             | informative                            | 2016-03-30 |
+| Jessica     | Hospital Staff      | Honest                                 | 2016-04-20 |
+| Christopher | Hospital Facilities | Room AC not works                      | 2016-09-05 |
+| Sarah       | Doctors             | Rude                                   | 2016-12-21 |
+| Karen       | Hospital Staff      | Timely                                 | 2017-03-11 |
+| Lisa        | Hospital Facilities | Ambulance came late                    | 2017-03-30 |
+| Daniel      | Doctors             | Was late during surgery                | 2017-04-30 |
+| Michael     | Hospital Staff      | impolite and dishonest                 | 2018-01-20 |
+| William     | Hospital Facilities | Canteen Food was awful                 | 2018-01-20 |
+| James       | Doctors             | Not much Informative and Knowledgeable | 2017-07-25 |
++-------------+---------------------+----------------------------------------+------------+
+25 rows in set (0.00 sec)
+
+mysql> SELECT
+    ->     nn.nurseempno,
+    ->     nn.nursename,
+    ->     nn.nursestation,
+    ->     pd.patientname,
+    ->     dd.doctname
+    -> FROM
+    ->          nursepatientdoct npd
+    ->     INNER JOIN patientdetails pd ON npd.patientid = pd.patientid
+    ->     INNER JOIN doctor         dd ON npd.doctid = dd.doctid
+    ->     INNER JOIN doctor         dd ON npd.doctid = dd.doctid
+    ->     INNER JOIN doctor         dd ON npd.doctid = dd.doctid;
+ERROR 1066 (42000): Not unique table/alias: 'dd'
+        SELECT nn.nurseempno, 
+            nn.nursename,  
+            nn.nursestation,
+            pd.patientname,
+            dd.doctname
+        FROM
+            NursePatientDoct npd
+            INNER JOIN PatientDetails pd ON npd.patientid = pd.patientid
+            INNER JOIN Doctor         dd ON npd.doctid = dd.doctid
+            INNER JOIN Nurses         nn ON npd.nurseid = nn.nurseid;
++------------+---------------+-----------------------+-------------+--------------+
+| nurseempno | nursename     | nursestation          | patientname | doctname     |
++------------+---------------+-----------------------+-------------+--------------+
+|       1000 | Debrah Lewis  | OPD                   | James       | Dr.Edward    |
+|       1001 | Gabriela      | IP                    | Robert      | Dr.Timothy   |
+|       1002 | Maggie        | OT                    | John        | Dr.Cynthia   |
+|       1003 | Melissa       | OT                    | Patricia    | Dr.Deborah   |
+|       1004 | Hilma         | OT                    | Susan       | Dr.Deborah   |
+|       1005 | Dicko         | IP                    | Jessica     | Dr.Stephanie |
+|       1006 | Fatoumata     | IP                    | Michael     | Dr.Kathleen  |
+|       1007 | Annette       | MRD                   | Thomas      | Dr.Melissa   |
+|       1008 | Sally         | MRD                   | Christopher | Dr.Jonathan  |
+|       1009 | Pairman       | Pharmacy              | Mary        | Dr.George    |
+|       1010 | Platel        | OPD                   | David       | Dr.Eric      |
+|       1011 | Claudine      | Pharmacy              | Sarah       | Dr.George    |
+|       1012 | Tekla         | MRD                   | William     | Dr.Kathleen  |
+|       1013 | Shipahu       | IP                    | Karen       | Dr.Melissa   |
+|       1014 | Natangwe      | OPD                   | Lisa        | Dr.Cynthia   |
+|       1015 | Teja          | Pharmacy              | Daniel      | Dr.Timothy   |
+|       1016 | Skodic        | IP                    | Jennifer    | Dr.Gary      |
+|       1017 | Zaksek        | Rehabilitation centre | James       | Dr.Jason     |
+|       1018 | Mary          | IP                    | Barbara     | Dr.George    |
+|       1019 | Agholor       | OT                    | Richard     | Dr.Melissa   |
+|       1020 | Edidong       | Rehabilitation centre | Joseph      | Dr.Jason     |
+|       1021 | Asanga        | OT                    | Linda       | Dr.Jonathan  |
+|       1022 | Yoko Shimpuku | Rehabilitation centre | William     | Dr.Gary      |
+|       1023 | Albertha      | Pharmacy              | Elizabeth   | Dr.Ryan      |
+|       1024 | Freeman       | OT                    | Michael     | Dr.Jonathan  |
++------------+---------------+-----------------------+-------------+--------------+
+25 rows in set (0.00 sec)
+
+        SELECT
+            dd.doctname,
+            ot.opid,
+            ot.dateofsurgery,
+            ot.fromtime,
+            ot.totime,
+            pd.patientname
+        FROM
+                OperationTheatre ot
+            INNER JOIN Doctor         dd ON ot.doctid = dd.doctid
+            INNER JOIN PatientDetails pd ON ot.patientid = pd.patientid;
++--------------+------+---------------+----------+----------+-------------+
+| doctname     | opid | dateofsurgery | fromtime | totime   | patientname |
++--------------+------+---------------+----------+----------+-------------+
+| Dr.George    |  601 | 2021-11-11    | 6:45 am  | 12:00 pm | James       |
+| Dr.Timothy   |  602 | 2021-11-12    | 9:45 am  | 1:00 pm  | Robert      |
+| Dr.Ronald    |  603 | 2021-11-15    | 6:00 pm  | 8:00 pm  | John        |
+| Dr.Edward    |  604 | 2021-11-16    | 6:45 pm  | 9:00 pm  | Michael     |
+| Dr.Jason     |  605 | 2021-11-20    | 5:20 pm  | 9:00 pm  | Mary        |
+| Dr.Jeffrey   |  606 | 2021-11-22    | 9:00 am  | 12:00 pm | Patricia    |
+| Dr.Ryan      |  607 | 2021-11-25    | 6:15 pm  | 2:00 am  | David       |
+| Dr.Jacob     |  608 | 2021-11-27    | 4:00 pm  | 11:00 pm | Jennifer    |
+| Dr.Gary      |  609 | 2021-11-29    | 5:00 am  | 11:00 am | Linda       |
+| Dr.Nicholas  |  610 | 2021-11-30    | 3:25 pm  | 9:00 pm  | Elizabeth   |
+| Dr.Eric      |  611 | 2021-12-01    | 2:00 pm  | 5:00 pm  | William     |
+| Dr.Jonathan  |  612 | 2021-12-02    | 2:10 pm  | 12:00 am | Barbara     |
+| Dr.Stephan   |  613 | 2021-12-04    | 2:15 pm  | 7:00 pm  | Richard     |
+| Dr.Larry     |  614 | 2021-12-10    | 2:20 pm  | 4:00 pm  | Joseph      |
+| Dr.Melissa   |  615 | 2021-12-12    | 2:45 pm  | 6:00 pm  | Thomas      |
+| Dr.Deborah   |  616 | 2021-12-13    | 3:15 pm  | 7:00 pm  | Susan       |
+| Dr.Stephanie |  617 | 2021-12-24    | 2:15 pm  | 7:00 pm  | Jessica     |
+| Dr.Rebecca   |  618 | 2021-12-24    | 7:15 pm  | 9:00 pm  | Charles     |
+| Dr.Sharon    |  619 | 2022-12-04    | 4:15 pm  | 9:00 pm  | Christopher |
+| Dr.Laura     |  620 | 2022-01-12    | 7:15 pm  | 10:00 pm | Sarah       |
+| Dr.Cynthia   |  621 | 2022-01-14    | 10:15 pm | 1:00 am  | Karen       |
+| Dr.Kathleen  |  622 | 2022-01-24    | 4:15 pm  | 10:00 pm | Lisa        |
+| Dr.Amy       |  623 | 2022-01-26    | 9:15 pm  | 12:00 am | Daniel      |
+| Dr.Angela    |  624 | 2022-03-24    | 4:15 pm  | 9:00 pm  | Nancy       |
+| Dr.Shirley   |  625 | 2022-03-14    | 10:25 am | 9:00 pm  | Matthew     |
++--------------+------+---------------+----------+----------+-------------+
+25 rows in set (0.01 sec)
+
+         SELECT
+             am.assetid,
+             am.assetstartdate,
+             am.assetenddate,
+             emt.maintcompany,
+             emt.satisfactory,
+             am.depreciationpct
+         FROM
+                  AssetsMaster am
+             INNER JOIN EquipMaint emt ON am.assetid = emt.assetid;
++---------+----------------+--------------+--------------+--------------+-----------------+
+| assetid | assetstartdate | assetenddate | maintcompany | satisfactory | depreciationpct |
++---------+----------------+--------------+--------------+--------------+-----------------+
+|   10001 | 2021-11-22     | 2022-01-02   | Cascade      | Y            | 10              |
+|   10002 | 2021-11-21     | 2022-02-21   | Cascade      | Y            | 15              |
+|   10003 | 2021-10-22     | 2022-01-02   | Cascade      | N            | 13              |
+|   10004 | 2021-10-12     | 2022-01-05   | Novartis     | Y            | 11              |
+|   10005 | 2021-10-20     | 2022-01-21   | Novartis     | N            | 16              |
+|   10006 | 2021-09-15     | 2022-01-23   | Novartis     | N            | 12              |
+|   10007 | 2021-11-02     | 2022-03-25   | Medtronic    | Y            | 18              |
+|   10008 | 2021-10-29     | 2022-03-12   | Medtronic    | N            | 15              |
+|   10009 | 2021-10-03     | 2022-03-02   | Medtronic    | Y            | 20              |
+|   10010 | 2021-10-04     | 2022-03-04   | Baxer        | Y            | 10              |
+|   10011 | 2021-10-05     | 2022-03-05   | Baxer        | Y            | 20              |
+|   10012 | 2021-10-06     | 2022-03-06   | Baxer        | Y            | 20              |
+|   10013 | 2021-10-10     | 2022-03-13   | Baxer        | N            | 13              |
+|   10014 | 2021-10-11     | 2022-03-14   | Danaher      | Y            | 12              |
+|   10015 | 2021-12-22     | 2022-04-20   | Danaher      | Y            | 14              |
+|   10016 | 2021-12-23     | 2022-04-21   | Danaher      | N            | 10              |
+|   10017 | 2021-12-24     | 2022-04-22   | Danaher      | Y            | 14              |
+|   10018 | 2021-12-25     | 2022-04-23   | 3M Company   | N            | 15              |
+|   10019 | 2021-12-26     | 2022-04-24   | 3M Company   | Y            | 16              |
+|   10020 | 2021-12-27     | 2022-04-25   | 3M Company   | Y            | 11              |
+|   10021 | 2021-12-28     | 2022-04-26   | 3M Company   | N            | 12              |
+|   10022 | 2021-12-29     | 2022-04-27   | Siemens      | Y            | 16              |
+|   10023 | 2021-12-30     | 2022-05-02   | Siemens      | Y            | 20              |
+|   10024 | 2021-12-02     | 2022-05-05   | Siemens      | Y            | 21              |
+|   10025 | 2021-12-03     | 2022-05-07   | Siemens      | N            | 22              |
++---------+----------------+--------------+--------------+--------------+-----------------+
+25 rows in set (0.00 sec)
+
+        SELECT
+            pd.patientname,
+            dd.diseasedescription,
+            dd.chronic,
+            ps.startdate,
+            ps.enddates
+        FROM
+                 PatientDetails pd
+            INNER JOIN PatientDisease ps ON pd.patientid = ps.patientid
+            INNER JOIN Disease        dd ON ps.diseaseid = dd.diseaseid;
++-------------+--------------------+---------+------------+------------+
+| patientname | diseasedescription | chronic | startdate  | enddates   |
++-------------+--------------------+---------+------------+------------+
+| James       | Asthma             | Y       | 2016-01-01 | 2016-01-10 |
+| Robert      | Rabies             | N       | 2016-01-20 | 2016-01-25 |
+| John        | Eating disorders   | Y       | 2016-02-01 | 2016-02-20 |
+| Patricia    | Cancer             | Y       | 2016-03-15 | 2016-04-15 |
+| Susan       | Cancer             | Y       | 2016-03-25 | 2016-03-30 |
+| Jessica     | Obesity            | Y       | 2016-04-15 | 2016-04-20 |
+| Michael     | Obesity            | Y       | 2016-07-05 | 2016-07-15 |
+| Thomas      | Heart disease      | Y       | 2016-08-17 | 2016-08-25 |
+| Christopher | Tuberculosis       | N       | 2016-08-25 | 2016-09-05 |
+| Mary        | Chickenpox         | N       | 2016-10-05 | 2016-10-25 |
+| David       | Hepatatis C        | N       | 2016-11-08 | 2016-11-18 |
+| Sarah       | Chickenpox         | N       | 2016-12-01 | 2016-12-21 |
+| William     | Arthritis          | Y       | 2017-01-01 | 2017-02-01 |
+| Karen       | Heart disease      | Y       | 2017-02-16 | 2017-03-11 |
+| Lisa        | Mumps              | N       | 2017-03-21 | 2017-03-30 |
+| Daniel      | Chickenpox         | N       | 2017-04-01 | 2017-04-30 |
+| Jennifer    | Hepatatis B        | N       | 2017-06-05 | 2017-06-18 |
+| James       | Influenza          | N       | 2017-07-16 | 2017-07-25 |
+| Barbara     | Chickenpox         | N       | 2017-09-05 | 2017-09-22 |
+| Richard     | Heart disease      | Y       | 2017-10-01 | 2017-10-12 |
+| Joseph      | Influenza          | N       | 2017-10-01 | 2017-10-13 |
+| Linda       | Tuberculosis       | N       | 2017-11-01 | 2017-11-11 |
+| William     | Hepatatis B        | N       | 2018-01-11 | 2018-01-20 |
+| Elizabeth   | Chickenpox         | N       | 2018-01-11 | 2018-01-20 |
+| Michael     | Tuberculosis       | N       | 2018-01-15 | 2018-01-20 |
++-------------+--------------------+---------+------------+------------+
+25 rows in set (0.00 sec)
+
+         SELECT
+             am.assetid,
+             am.assetstartdate,
+             am.assetenddate,
+             am.depreciationpct
+         FROM
+             AssetsMaster am
+         GROUP BY
+             am.assetid,
+             am.assetstartdate,
+             am.assetenddate,
+             am.depreciationpct;
++---------+----------------+--------------+-----------------+
+| assetid | assetstartdate | assetenddate | depreciationpct |
++---------+----------------+--------------+-----------------+
+|   10001 | 2021-11-22     | 2022-01-02   | 10              |
+|   10002 | 2021-11-21     | 2022-02-21   | 15              |
+|   10003 | 2021-10-22     | 2022-01-02   | 13              |
+|   10004 | 2021-10-12     | 2022-01-05   | 11              |
+|   10005 | 2021-10-20     | 2022-01-21   | 16              |
+|   10006 | 2021-09-15     | 2022-01-23   | 12              |
+|   10007 | 2021-11-02     | 2022-03-25   | 18              |
+|   10008 | 2021-10-29     | 2022-03-12   | 15              |
+|   10009 | 2021-10-03     | 2022-03-02   | 20              |
+|   10010 | 2021-10-04     | 2022-03-04   | 10              |
+|   10011 | 2021-10-05     | 2022-03-05   | 20              |
+|   10012 | 2021-10-06     | 2022-03-06   | 20              |
+|   10013 | 2021-10-10     | 2022-03-13   | 13              |
+|   10014 | 2021-10-11     | 2022-03-14   | 12              |
+|   10015 | 2021-12-22     | 2022-04-20   | 14              |
+|   10016 | 2021-12-23     | 2022-04-21   | 10              |
+|   10017 | 2021-12-24     | 2022-04-22   | 14              |
+|   10018 | 2021-12-25     | 2022-04-23   | 15              |
+|   10019 | 2021-12-26     | 2022-04-24   | 16              |
+|   10020 | 2021-12-27     | 2022-04-25   | 11              |
+|   10021 | 2021-12-28     | 2022-04-26   | 12              |
+|   10022 | 2021-12-29     | 2022-04-27   | 16              |
+|   10023 | 2021-12-30     | 2022-05-02   | 20              |
+|   10024 | 2021-12-02     | 2022-05-05   | 21              |
+|   10025 | 2021-12-03     | 2022-05-07   | 22              |
++---------+----------------+--------------+-----------------+
+25 rows in set (0.00 sec)
+
+mysql>
