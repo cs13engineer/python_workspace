@@ -1,0 +1,270 @@
+# from lib import books
+from datetime import datetime
+from datetime import timedelta
+from datetime import date
+from lib import bookTransaction
+from lib import books
+from toCSV import saveToCSV
+from lib import fine
+import pandas as pd
+import csv
+
+beginingDate = date.today()
+Enddate = beginingDate + timedelta(days=10)
+
+Students={
+    "ID":[],
+    "StudentName":[],
+    "Class":[],
+    "Dept":[]
+}
+
+
+def readCSV():
+    # print("Before add anything:",Students)
+    with open('./students.csv','r') as file:
+        reader = csv.reader(file)
+        print("rows are extracted from csv")
+        for read in reader:
+            Students["ID"].append(read[0])
+            Students["StudentName"].append(read[1])
+            Students["Class"].append(read[2])
+            Students["Dept"].append(read[3])
+    # print("After adding everythng:",Students)
+
+def addStudent():
+    print("Inside Students.py adding students")
+    ID = input("Enter Student Id: ")
+    studName = input("Enter Student Name: ")
+    Class = input("Enter Class: ")
+    dept = input("Enter Department Name: ")
+    print(ID,studName,Class,dept)
+    """
+        Adding student information to Students dictionary!
+    """
+    Students["ID"].append(ID)
+    Students["StudentName"].append(studName)
+    Students["Class"].append(Class)
+    Students["Dept"].append(dept)
+    
+
+def clearStudent():
+    Students["ID"].clear()
+    Students["StudentName"].clear()
+    Students["Class"].clear()
+    Students["Dept"].clear()
+
+ResultantDict={}
+
+
+def borrowBook(book,Dict):
+
+    """
+        1. function to display only available books
+        2. ask for student ID
+        3. ask for book Name
+    """
+    books.readCSV()
+    readCSV()
+    # print("this is book Transaction Dictionary: ",bookTransaction.BookTransaction)
+    sName = input("enter your ID")
+    s_idx = Students["ID"].index(sName)
+    print("Borrowing...",book,Dict)
+    b_idx = Dict["Name"].index(book)
+    fine = 0
+    status = 'not returned'
+    # print("if something is not present: ",b_idx)
+    print("isAvailable: ",Dict["isAvailable"][b_idx])
+    if(bool(Dict["isAvailable"][b_idx])):
+        bookTransaction.BookTransaction["StudentID"].append(Students["ID"][s_idx])
+        bookTransaction.BookTransaction["StudentName"].append(Students["StudentName"][s_idx])
+        bookTransaction.BookTransaction["StudentDept"].append(Students["Dept"][s_idx])
+        bookTransaction.BookTransaction["BookName"].append(Dict["Name"][b_idx])
+        bookTransaction.BookTransaction["Author"].append(Dict["Author"][b_idx])
+        bookTransaction.BookTransaction["IssuedDate"].append(beginingDate)
+        bookTransaction.BookTransaction["ExpectedReturnDate"].append(Enddate)
+
+
+        ResultantDict =  bookTransaction.BookTransaction
+        total =  int(Dict["bookCount"][b_idx])
+        if total == 1:
+            Dict["isAvailable"][b_idx]=False
+        total = total - 1
+        Dict["bookCount"][b_idx]=total
+    else:
+        print("##Book is not currently Availble!##")
+    # print("value::::   ",Dict["bookCount"][b_idx])
+    return Dict
+
+
+def payingFine():
+    print("paying fine")
+
+
+def NewReturn():
+    books.readCSV()
+    bookTransaction.readCSV()
+    ##loaded in memory
+    """
+        index of books:= b_idx
+        index of bookTransaction:= bt_idx
+    """
+    print("For returning the book fill the following details carefully: ")
+    b_name = input("Eneter Book Name to Return: ")
+    b_idx = books.Books["Name"].index(b_name)
+    student_id = input("Enter Student Id")
+    bt_idx = bookTransaction.BookTransaction["StudentID"].index(student_id)
+    print(b_name,"is present at:",b_idx)
+    print("This field contains Data of this type:---> ",type(books.Books["isAvailable"][b_idx]))
+    isAvailable = bool(books.Books["isAvailable"][b_idx])
+    print("This will be converted as:-->",type(isAvailable))
+    print(isAvailable)
+
+    """
+        1.Declare a variable total and assign it bookCount
+        2.if isAvailable == False :--> then assign it with True and increase the count
+    """
+    total = int(books.Books["bookCount"][b_idx])
+
+    if(books.Books["isAvailable"][b_idx] == 'True'):
+        print("is Available is true")
+        total = total + 1
+        books.Books["bookCount"][b_idx] = total
+
+        ## return date and fine if applicable
+        # bookTransaction.BookTransaction["ReturnedDate"].append(date.today())
+        retuningDate = datetime.strptime(bookTransaction.BookTransaction["ExpectedReturnDate"][bt_idx], "%Y-%m-%d")
+        print("this is return date: --> ",retuningDate)
+        print("and todays date: --> ",date.today())
+        today = datetime.strptime(str(date.today()), "%Y-%m-%d")
+        print("today:-->",today)
+        # print("difference: ",int(retuningDate-today))
+        FineAmt = 0
+        if(today <= retuningDate):
+            # bookTransaction.BookTransaction["Fine"][bt_idx].append(Fine)
+            # bookTransaction.BookTransaction["Status"][bt_idx].append("Returned")
+            print("No Fine will be Charged")
+            # saveToCSV.modifyCSV()
+            # saveToCSV.modifyBookTransactionCSV()
+            saveToCSV.newModifyCSV()
+            saveToCSV.newModifyBookTransactionCSV()
+            
+            fine.readCSV()
+            fine.Fine["StudentID"].append(bookTransaction.BookTransaction["StudentID"][bt_idx])
+            fine.Fine["StudentName"].append(bookTransaction.BookTransaction["StudentName"][bt_idx])
+            fine.Fine["BookName"].append(bookTransaction.BookTransaction["BookName"][bt_idx])
+            fine.Fine["Amount"].append(FineAmt)
+            fine.Fine["DueDate"].append(bookTransaction.BookTransaction["ExpectedReturnDate"][bt_idx])
+            fine.Fine["TimeElapsed"].append(retuningDate-today)
+            saveToCSV.modifyFineToCSV() 
+            books.clearMyBooks()
+            ClearTransaction()
+            clearStudent()
+        else:
+            FineAmt = 10
+            # bookTransaction.BookTransaction["Fine"][bt_idx].append(Fine)
+            # bookTransaction.BookTransaction["Status"][bt_idx].append("Returned")
+            print(Fine," Fine will be charged to you!")
+            # saveToCSV.modifyCSV()
+            # saveToCSV.modifyBookTransactionCSV()
+            # books.clearMyBooks()
+            # ClearTransaction()
+            # books.readCSV()
+            saveToCSV.newModifyCSV()
+            saveToCSV.newModifyBookTransactionCSV()
+            fine.readCSV()
+            fine.Fine["StudentID"].append(bookTransaction.BookTransaction["StudentID"][bt_idx])
+            fine.Fine["StudentName"].append(bookTransaction.BookTransaction["StudentName"][bt_idx])
+            fine.Fine["BookName"].append(bookTransaction.BookTransaction["BookName"][bt_idx])
+            fine.Fine["Amount"].append(FineAmt)
+            fine.Fine["DueDate"].append(bookTransaction.BookTransaction["ExpectedReturnDate"][bt_idx])
+            fine.Fine["TimeElapsed"].append(retuningDate-today)
+            saveToCSV.modifyFineToCSV() 
+            books.clearMyBooks()
+            ClearTransaction()
+            clearStudent()
+        # books.Books[]
+
+
+    else:
+        print("\nis Available is false")
+        total = total + 1
+        books.Books["bookCount"][b_idx] = total
+        books.Books["isAvailable"][b_idx] = True
+        ## return date and fine if applicable
+        # bookTransaction.BookTransaction["ReturnedDate"].append(date.today())
+        retuningDate = datetime.strptime(bookTransaction.BookTransaction["ExpectedReturnDate"][bt_idx], "%Y-%m-%d")
+        print("this is return date: --> ",retuningDate)
+        print("and todays date: --> ",date.today())
+        today = datetime.strptime(str(date.today()), "%Y-%m-%d")
+        print("today:-->",today)
+        # print("difference: ",int(retuningDate-today))
+        FineAmt = 0
+        if(today <= retuningDate):
+            # bookTransaction.BookTransaction["Fine"][bt_idx].append(Fine)
+            # bookTransaction.BookTransaction["Status"][bt_idx].append("Returned")
+            print("No Fine will be Charged")
+            # saveToCSV.modifyCSV()
+            # saveToCSV.modifyBookTransactionCSV()
+            # books.clearMyBooks()
+            # ClearTransaction()
+            saveToCSV.newModifyCSV()
+            saveToCSV.newModifyBookTransactionCSV()
+            fine.readCSV()
+            fine.Fine["StudentID"].append(bookTransaction.BookTransaction["StudentID"][bt_idx])
+            fine.Fine["StudentName"].append(bookTransaction.BookTransaction["StudentName"][bt_idx])
+            fine.Fine["BookName"].append(bookTransaction.BookTransaction["BookName"][bt_idx])
+            fine.Fine["Amount"].append(FineAmt)
+            fine.Fine["DueDate"].append(bookTransaction.BookTransaction["ExpectedReturnDate"][bt_idx])
+            fine.Fine["TimeElapsed"].append(retuningDate-today)
+            saveToCSV.modifyFineToCSV()  
+            books.clearMyBooks()
+            ClearTransaction()
+            clearStudent()        
+        else:
+            FineAmt = 10
+            # bookTransaction.BookTransaction["Fine"][bt_idx].append(Fine)
+            # bookTransaction.BookTransaction["Status"][bt_idx].append("Returned")
+            print(Fine," Fine will be charged to you!")
+            # saveToCSV.modifyCSV()
+            # saveToCSV.modifyBookTransactionCSV()
+            # books.clearMyBooks()
+            # ClearTransaction()
+            saveToCSV.newModifyCSV()
+            saveToCSV.newModifyBookTransactionCSV()
+            fine.readCSV()
+            fine.Fine["StudentID"].append(bookTransaction.BookTransaction["StudentID"][bt_idx])
+            fine.Fine["StudentName"].append(bookTransaction.BookTransaction["StudentName"][bt_idx])
+            fine.Fine["BookName"].append(bookTransaction.BookTransaction["BookName"][bt_idx])
+            fine.Fine["Amount"].append(FineAmt)
+            fine.Fine["DueDate"].append(bookTransaction.BookTransaction[",u"][bt_idx])
+            fine.Fine["TimeElapsed"].append(retuningDate-today)
+            saveToCSV.modifyFineToCSV()  
+            books.clearMyBooks()
+            ClearTransaction()
+            clearStudent()
+
+
+
+
+
+def ClearTransaction():
+    bookTransaction.BookTransaction["StudentID"].clear()
+    bookTransaction.BookTransaction["StudentName"].clear()
+    bookTransaction.BookTransaction["StudentDept"].clear()
+    bookTransaction.BookTransaction["BookName"].clear()
+    bookTransaction.BookTransaction["Author"].clear()
+    bookTransaction.BookTransaction["IssuedDate"].clear()
+    bookTransaction.BookTransaction["ExpectedReturnDate"].clear()
+    # bookTransaction.BookTransaction["Fine"].clear()
+    # bookTransaction.BookTransaction["Status"].clear()
+    # print("cleared Or not::: -->",bookTransaction.BookTransaction)
+
+
+def displayStudent():
+    df = pd.DataFrame(Students, columns=['ID','StudentName','Class','Dept'])
+    if len(df) > 0:
+        print("## List Students ##")
+        print("\n",df)
+    else:
+        print("\n\t## No Records Are Present ##\n")

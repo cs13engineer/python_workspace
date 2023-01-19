@@ -1,0 +1,20 @@
+Library Management System
+Books (book id, isbn number, book name, book category, author 1,2,3,4, publisher, price)
+Students (student id, full name, class, address, pincode, mobile number)
+Books issued and Returned (book id, student id, date issued, date returned, fine)
+
+Look up for a book (Author, Book Name)
+Issue a book to a student (capture date and time)
+Update status when book returned (copy to history)
+CRUD - Books and Students
+
+Reports
+Students who have been issued more than 1 book
+Fines c
+Reports
+Students who have been issued more than 1 book
+Fines collected (details) from date – to date
+Most popular books
+Most popular authors
+Book details of students from date to date
+Daily Learning Meeting
