@@ -1,0 +1,23 @@
+{
+    "users": [
+        {
+            "Name": "Amol",
+            "age": 25
+        },
+        {
+            "Name": "Kishor",
+            "age": 25
+        },
+        {
+            "Name": "Ankus",
+            "age": 25
+        }
+    ]
+}
+
+{
+    "bankName":"HDFC",
+    "bankId":"123qwe123q",
+    "branchName":"PUNE"
+
+}

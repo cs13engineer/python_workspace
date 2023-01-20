@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<employee>
+    <name>Amol</name>
+    <id>123</id>
+    <age>23</age>
+    <dob>01/10/1998</dob>
+</employee>
